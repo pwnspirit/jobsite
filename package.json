@@ -1,0 +1,21 @@
+{
+  "name": "job-site-platform",
+  "version": "1.0.0",
+  "description": "Full-stack Job Site Platform for college coursework",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "install-all": "npm install && cd backend && npm install && cd frontend && npm install",
+    "setup-db": "cd backend && npm run setup-db",
+    "seed": "cd backend && npm run seed"
+  },
+  "keywords": ["job-site", "full-stack", "react", "nodejs", "mysql"],
+  "author": "Student",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+} 
