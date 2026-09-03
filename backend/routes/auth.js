@@ -16,11 +16,16 @@ const generateToken = (userId) => {
 
 // User registration
 router.post('/register', [
-  body('email').isEmail().normalizeEmail(),
-  body('password').isLength({ min: 6 }),
-  body('firstName').trim().isLength({ min: 2 }),
-  body('lastName').trim().isLength({ min: 2 }),
-  body('role').isIn(['seeker', 'recruiter'])
+  body('email').isEmail().normalizeEmail().withMessage('A valid email is required'),
+  body('password')
+    .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+    .matches(/[A-Za-z]/).withMessage('Password must contain at least one letter')
+    .matches(/\d/).withMessage('Password must contain at least one number'),
+  body('firstName').trim().isLength({ min: 2 }).withMessage('First name is too short'),
+  body('lastName').trim().isLength({ min: 2 }).withMessage('Last name is too short'),
+  body('role').isIn(['seeker', 'recruiter']).withMessage('Invalid role'),
+  body('phone').optional({ nullable: true, checkFalsy: true })
+    .matches(/^(\+977[\s-]?)?\d{10}$/).withMessage('Phone must be a 10-digit number, optionally prefixed with +977')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);

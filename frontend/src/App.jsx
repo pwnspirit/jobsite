@@ -9,6 +9,7 @@ import JobDetail from './pages/JobDetail'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import PostJob from './pages/PostJob'
+import MyJobs from './pages/MyJobs'
 import Applications from './pages/Applications'
 import AdminDashboard from './pages/AdminDashboard'
 import AdminUsers from './pages/AdminUsers'
@@ -28,16 +29,19 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="jobs" element={<JobList />} />
-        <Route path="jobs/:id" element={<JobDetail />} />
-        
+
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="profile" element={<Profile />} />
           <Route path="post-job" element={<PostJob />} />
+          <Route path="jobs/my-jobs" element={<MyJobs />} />
           <Route path="applications" element={<Applications />} />
         </Route>
-        
+
+        {/* Public job detail (declared after jobs/my-jobs so the static path wins) */}
+        <Route path="jobs/:id" element={<JobDetail />} />
+
         {/* Admin routes */}
         <Route element={<ProtectedRoute requireRole="admin" />}>
           <Route path="admin" element={<AdminDashboard />} />

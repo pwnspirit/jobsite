@@ -90,9 +90,9 @@ function PostJob() {
         applicationDeadline: jobData.applicationDeadline || null
       }
 
-      const response = await api.post('/jobs', formattedData)
-      toast.success('Job posted successfully!')
-      navigate('/dashboard')
+      await api.post('/jobs', formattedData)
+      toast.success('Job submitted! It will be visible once an admin approves it.')
+      navigate('/jobs/my-jobs')
     } catch (error) {
       toast.error(error.response?.data?.error || 'Failed to post job')
     } finally {

@@ -2,6 +2,21 @@
 
 A full-stack job site platform built with React, Node.js, Express, and MySQL. This platform allows job seekers to find and apply for jobs, and recruiters to post and manage job listings.
 
+## ⚡ Quick start
+
+Make sure MySQL/MariaDB is running, then from the project root:
+
+```bash
+./run.sh
+```
+
+The script checks Node/npm, verifies (or creates) the database, installs dependencies, seeds demo data if the DB is empty, and starts both servers:
+
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:5000/api/health
+
+Use `./run.sh --fresh` to rebuild the schema and reload sample data. Demo logins are printed on start (admin `admin@jobsite.com` / `admin123`).
+
 ## 🚀 Features
 
 ### Job Seeker Module

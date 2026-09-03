@@ -42,7 +42,7 @@ async function seedData() {
         role: 'seeker',
         firstName: 'John',
         lastName: 'Doe',
-        phone: '+1-555-0101',
+        phone: '+977-9841000101',
         location: 'San Francisco, CA',
         bio: 'Experienced software developer with 5+ years in web development',
         experience: 'mid',
@@ -54,7 +54,7 @@ async function seedData() {
         role: 'seeker',
         firstName: 'Jane',
         lastName: 'Smith',
-        phone: '+1-555-0102',
+        phone: '+977-9841000102',
         location: 'New York, NY',
         bio: 'Frontend developer passionate about creating beautiful user experiences',
         experience: 'junior',
@@ -66,7 +66,7 @@ async function seedData() {
         role: 'seeker',
         firstName: 'Mike',
         lastName: 'Johnson',
-        phone: '+1-555-0103',
+        phone: '+977-9841000103',
         location: 'Austin, TX',
         bio: 'Senior full-stack developer with expertise in modern web technologies',
         experience: 'senior',
@@ -78,7 +78,7 @@ async function seedData() {
         role: 'recruiter',
         firstName: 'Sarah',
         lastName: 'Wilson',
-        phone: '+1-555-0201',
+        phone: '+977-9851000201',
         location: 'Seattle, WA',
         bio: 'Tech recruiter at TechCorp, specializing in software engineering roles'
       },
@@ -88,7 +88,7 @@ async function seedData() {
         role: 'recruiter',
         firstName: 'David',
         lastName: 'Brown',
-        phone: '+1-555-0202',
+        phone: '+977-9851000202',
         location: 'Boston, MA',
         bio: 'Senior recruiter at InnovateTech, focused on AI/ML talent'
       },
@@ -98,7 +98,7 @@ async function seedData() {
         role: 'recruiter',
         firstName: 'Emma',
         lastName: 'Davis',
-        phone: '+1-555-0203',
+        phone: '+977-9851000203',
         location: 'Denver, CO',
         bio: 'Startup recruiter helping early-stage companies build their teams'
       }

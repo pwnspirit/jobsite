@@ -143,6 +143,18 @@ function JobDetail() {
           Back to jobs
         </button>
 
+        {/* Status banner (only shown for owner/admin on non-live jobs) */}
+        {job.isApproved === false && (
+          <div className="mb-6 rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
+            This job is <strong>pending admin approval</strong> and is not visible on the public job board yet.
+          </div>
+        )}
+        {job.isActive === false && (
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+            This job is <strong>inactive</strong> and hidden from the public job board.
+          </div>
+        )}
+
         {/* Job Header */}
         <div className="bg-white rounded-lg shadow-soft p-8 mb-8">
           <div className="flex flex-col md:flex-row justify-between items-start mb-6">

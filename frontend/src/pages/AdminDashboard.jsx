@@ -41,12 +41,12 @@ function AdminDashboard() {
       setStats(statsResponse.data.stats)
 
       // Fetch recent users
-      const usersResponse = await api.get('/admin/users?limit=5&sortBy=latest')
-      setRecentUsers(usersResponse.data.users)
+      const usersResponse = await api.get('/admin/users?limit=5')
+      setRecentUsers(usersResponse.data.users || [])
 
       // Fetch pending jobs
-      const jobsResponse = await api.get('/admin/jobs?status=pending&limit=5')
-      setPendingJobs(jobsResponse.data.jobs)
+      const jobsResponse = await api.get('/admin/jobs?isApproved=false&limit=5')
+      setPendingJobs(jobsResponse.data.jobs || [])
       
     } catch (error) {
       console.error('Failed to fetch admin data:', error)
@@ -58,7 +58,7 @@ function AdminDashboard() {
 
   const approveJob = async (jobId) => {
     try {
-      await api.put(`/admin/jobs/${jobId}/approval`, { status: 'approved' })
+      await api.put(`/admin/jobs/${jobId}/approval`, { isApproved: true })
       toast.success('Job approved successfully!')
       fetchAdminData()
     } catch (error) {
@@ -68,7 +68,7 @@ function AdminDashboard() {
 
   const rejectJob = async (jobId) => {
     try {
-      await api.put(`/admin/jobs/${jobId}/approval`, { status: 'rejected' })
+      await api.put(`/admin/jobs/${jobId}/approval`, { isApproved: false })
       toast.success('Job rejected')
       fetchAdminData()
     } catch (error) {
@@ -76,13 +76,13 @@ function AdminDashboard() {
     }
   }
 
-  const updateUserStatus = async (userId, status) => {
+  const updateUserStatus = async (userId, isActive) => {
     try {
-      await api.put(`/admin/users/${userId}/status`, { status })
-      toast.success(`User ${status} successfully!`)
+      await api.put(`/admin/users/${userId}/status`, { isActive })
+      toast.success(`User ${isActive ? 'activated' : 'deactivated'} successfully!`)
       fetchAdminData()
     } catch (error) {
-      toast.error(`Failed to ${status} user`)
+      toast.error('Failed to update user status')
     }
   }
 
@@ -195,14 +195,14 @@ function AdminDashboard() {
                     <div className="flex space-x-2">
                       {user.isActive ? (
                         <button
-                          onClick={() => updateUserStatus(user.id, 'inactive')}
+                          onClick={() => updateUserStatus(user.id, false)}
                           className="btn btn-outline btn-sm text-red-600"
                         >
                           Deactivate
                         </button>
                       ) : (
                         <button
-                          onClick={() => updateUserStatus(user.id, 'active')}
+                          onClick={() => updateUserStatus(user.id, true)}
                           className="btn btn-primary btn-sm"
                         >
                           Activate

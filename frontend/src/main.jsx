@@ -13,21 +13,22 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <App />
         <Toaster
           position="top-right"
+          gutter={8}
           toastOptions={{
-            duration: 4000,
+            duration: 2500,
             style: {
               background: '#363636',
               color: '#fff',
             },
             success: {
-              duration: 3000,
+              duration: 2000,
               iconTheme: {
                 primary: '#22c55e',
                 secondary: '#fff',
               },
             },
             error: {
-              duration: 5000,
+              duration: 3000,
               iconTheme: {
                 primary: '#ef4444',
                 secondary: '#fff',

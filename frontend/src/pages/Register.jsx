@@ -3,6 +3,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { Eye, EyeOff, Mail, Lock, User, Phone, MapPin } from 'lucide-react'
 import toast from 'react-hot-toast'
+import {
+  sanitizePhone,
+  isValidPhone,
+  isValidPassword,
+  PHONE_HINT,
+  PASSWORD_HINT
+} from '../utils/validation'
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -26,7 +33,7 @@ function Register() {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: name === 'phone' ? sanitizePhone(value) : value
     }))
   }
 
@@ -47,12 +54,16 @@ function Register() {
       toast.error('Password is required')
       return false
     }
-    if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters')
+    if (!isValidPassword(formData.password)) {
+      toast.error(PASSWORD_HINT)
       return false
     }
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match')
+      return false
+    }
+    if (!isValidPhone(formData.phone)) {
+      toast.error(PHONE_HINT)
       return false
     }
     return true
@@ -233,12 +244,15 @@ function Register() {
                   name="phone"
                   type="tel"
                   autoComplete="tel"
+                  inputMode="tel"
+                  maxLength={18}
                   value={formData.phone}
                   onChange={handleChange}
                   className="input pl-10"
-                  placeholder="Enter your phone number"
+                  placeholder="9812345678"
                 />
               </div>
+              <p className="mt-1 text-xs text-gray-500">{PHONE_HINT}</p>
             </div>
 
             {/* Location Field */}
@@ -283,6 +297,7 @@ function Register() {
                     onChange={handleChange}
                     className="input pl-10 pr-10"
                     placeholder="Create password"
+                    minLength={8}
                   />
                   <button
                     type="button"
@@ -331,6 +346,7 @@ function Register() {
                 </div>
               </div>
             </div>
+            <p className="-mt-3 text-xs text-gray-500">{PASSWORD_HINT}</p>
 
             {/* Terms and Conditions */}
             <div className="flex items-center">

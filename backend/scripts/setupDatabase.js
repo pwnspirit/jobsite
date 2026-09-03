@@ -207,8 +207,8 @@ async function setupDatabase() {
       const hashedPassword = await bcrypt.hash('admin123', 12);
       
       await connection.query(
-        `INSERT INTO users (email, password, role, firstName, lastName, isVerified, isActive) 
-         VALUES (?, ?, 'admin', 'Admin', 'User', TRUE, TRUE)`,
+        `INSERT INTO users (email, password, role, firstName, lastName, phone, isVerified, isActive)
+         VALUES (?, ?, 'admin', 'Admin', 'User', '+977-9800000000', TRUE, TRUE)`,
         ['admin@jobsite.com', hashedPassword]
       );
       

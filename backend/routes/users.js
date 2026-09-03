@@ -65,7 +65,8 @@ router.put('/profile', [
   authenticateToken,
   body('firstName').optional().trim().isLength({ min: 2, max: 100 }),
   body('lastName').optional().trim().isLength({ min: 2, max: 100 }),
-  body('phone').optional().trim().isLength({ max: 20 }),
+  body('phone').optional({ nullable: true, checkFalsy: true })
+    .matches(/^(\+977[\s-]?)?\d{10}$/).withMessage('Phone must be a 10-digit number, optionally prefixed with +977'),
   body('location').optional().trim().isLength({ max: 255 }),
   body('bio').optional().trim().isLength({ max: 1000 }),
   body('experience').optional().isIn(['entry', 'junior', 'mid', 'senior', 'executive']),
@@ -413,6 +414,22 @@ router.get('/dashboard', authenticateToken, async (req, res) => {
         totalJobs,
         totalApplications,
         activeJobs
+      };
+    } else if (req.user.role === 'admin') {
+      // Admin stats (mirror of /admin/dashboard)
+      const { Application } = require('../models');
+      const totalUsers = await User.count();
+      const totalJobs = await Job.count();
+      const totalApplications = await Application.count();
+      const pendingJobApprovals = await Job.count({ where: { isApproved: false } });
+      const activeUsers = await User.count({ where: { isActive: true } });
+
+      stats = {
+        totalUsers,
+        totalJobs,
+        totalApplications,
+        pendingJobApprovals,
+        activeUsers
       };
     }
 

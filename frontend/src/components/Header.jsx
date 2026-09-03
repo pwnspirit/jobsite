@@ -52,16 +52,28 @@ function Header() {
               Find Jobs
             </Link>
             {isAuthenticated && user?.role === 'recruiter' && (
-              <Link
-                to="/post-job"
-                className={`text-sm font-medium transition-colors ${
-                  isActive('/post-job') 
-                    ? 'text-primary-600' 
-                    : 'text-gray-700 hover:text-primary-600'
-                }`}
-              >
-                Post Job
-              </Link>
+              <>
+                <Link
+                  to="/post-job"
+                  className={`text-sm font-medium transition-colors ${
+                    isActive('/post-job')
+                      ? 'text-primary-600'
+                      : 'text-gray-700 hover:text-primary-600'
+                  }`}
+                >
+                  Post Job
+                </Link>
+                <Link
+                  to="/jobs/my-jobs"
+                  className={`text-sm font-medium transition-colors ${
+                    isActive('/jobs/my-jobs')
+                      ? 'text-primary-600'
+                      : 'text-gray-700 hover:text-primary-600'
+                  }`}
+                >
+                  My Jobs
+                </Link>
+              </>
             )}
           </nav>
 
@@ -190,17 +202,30 @@ function Header() {
                 Find Jobs
               </Link>
               {isAuthenticated && user?.role === 'recruiter' && (
-                <Link
-                  to="/post-job"
-                  className={`text-sm font-medium px-3 py-2 rounded-lg transition-colors ${
-                    isActive('/post-job') 
-                      ? 'text-primary-600 bg-primary-50' 
-                      : 'text-gray-700 hover:bg-gray-50'
-                  }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Post Job
-                </Link>
+                <>
+                  <Link
+                    to="/post-job"
+                    className={`text-sm font-medium px-3 py-2 rounded-lg transition-colors ${
+                      isActive('/post-job')
+                        ? 'text-primary-600 bg-primary-50'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Post Job
+                  </Link>
+                  <Link
+                    to="/jobs/my-jobs"
+                    className={`text-sm font-medium px-3 py-2 rounded-lg transition-colors ${
+                      isActive('/jobs/my-jobs')
+                        ? 'text-primary-600 bg-primary-50'
+                        : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    My Jobs
+                  </Link>
+                </>
               )}
               {isAuthenticated ? (
                 <>

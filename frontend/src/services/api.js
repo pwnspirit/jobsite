@@ -39,17 +39,17 @@ api.interceptors.response.use(
     else if (error.response?.status === 403) {
       toast.error('You do not have permission to perform this action');
     }
-    
-    // Handle validation errors
-    else if (error.response?.status === 422) {
-      const validationErrors = error.response.data.errors;
-      if (Array.isArray(validationErrors)) {
-        validationErrors.forEach(err => toast.error(err.msg));
-      } else {
-        toast.error(message);
-      }
+
+    // Handle rate limiting
+    else if (error.response?.status === 429) {
+      toast.error('Too many requests — please wait a moment and try again.');
     }
-    
+
+    // Handle validation errors (express-validator returns { errors: [{ msg }] })
+    else if (Array.isArray(error.response?.data?.errors) && error.response.data.errors.length) {
+      toast.error(error.response.data.errors[0].msg || message);
+    }
+
     // Handle other errors
     else {
       toast.error(message);

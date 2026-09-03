@@ -66,7 +66,7 @@ router.get('/users', [
 
     const whereClause = {};
     if (role) whereClause.role = role;
-    if (typeof isActive === 'boolean') whereClause.isActive = isActive;
+    if (isActive === 'true' || isActive === 'false') whereClause.isActive = isActive === 'true';
     if (search) {
       whereClause[require('sequelize').Op.or] = [
         { firstName: { [require('sequelize').Op.like]: `%${search}%` } },
@@ -151,6 +151,82 @@ router.put('/users/:id/status', [
   }
 });
 
+// Update user details (profile fields + role) — admin edit
+router.put('/users/:id', [
+  body('firstName').optional().trim().isLength({ min: 1, max: 100 }),
+  body('lastName').optional().trim().isLength({ min: 1, max: 100 }),
+  body('email').optional().trim().isEmail().normalizeEmail(),
+  body('phone').optional({ nullable: true, checkFalsy: true })
+    .matches(/^(\+977[\s-]?)?\d{10}$/).withMessage('Phone must be a 10-digit number, optionally prefixed with +977'),
+  body('location').optional({ nullable: true }).trim().isLength({ max: 255 }),
+  body('role').optional().isIn(['seeker', 'recruiter', 'admin']),
+  body('isActive').optional().isBoolean(),
+  body('isVerified').optional().isBoolean()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { id } = req.params;
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const { firstName, lastName, email, phone, location, role, isActive, isVerified } = req.body;
+
+    // Prevent an admin from locking themselves out
+    if (user.id === req.user.id) {
+      if (role && role !== 'admin') {
+        return res.status(400).json({ error: 'You cannot change your own role' });
+      }
+      if (isActive === false) {
+        return res.status(400).json({ error: 'You cannot deactivate your own account' });
+      }
+    }
+
+    // Enforce unique email
+    if (email && email !== user.email) {
+      const existing = await User.findOne({ where: { email } });
+      if (existing) {
+        return res.status(400).json({ error: 'Email already in use' });
+      }
+    }
+
+    const roleChanged = role !== undefined && role !== user.role;
+
+    const updates = {};
+    if (firstName !== undefined) updates.firstName = firstName;
+    if (lastName !== undefined) updates.lastName = lastName;
+    if (email !== undefined) updates.email = email;
+    if (phone !== undefined) updates.phone = phone || null;
+    if (location !== undefined) updates.location = location || null;
+    if (role !== undefined) updates.role = role;
+    if (isActive !== undefined) updates.isActive = isActive;
+    if (isVerified !== undefined) updates.isVerified = isVerified;
+
+    await user.update(updates);
+
+    if (roleChanged) {
+      await Notification.create({
+        userId: user.id,
+        type: 'system',
+        title: 'Account Role Updated',
+        message: `An administrator changed your account role to "${role}".`,
+        data: { action: 'role_changed', role }
+      });
+    }
+
+    const { password, ...safeUser } = user.toJSON();
+    res.json({ message: 'User updated successfully', user: safeUser });
+  } catch (error) {
+    console.error('Update user error:', error);
+    res.status(500).json({ error: 'Failed to update user' });
+  }
+});
+
 // Get all jobs with pagination and filters
 router.get('/jobs', [
   query('page').optional().isInt({ min: 1 }),
@@ -169,8 +245,8 @@ router.get('/jobs', [
     const offset = (page - 1) * limit;
 
     const whereClause = {};
-    if (typeof isApproved === 'boolean') whereClause.isApproved = isApproved;
-    if (typeof isActive === 'boolean') whereClause.isActive = isActive;
+    if (isApproved === 'true' || isApproved === 'false') whereClause.isApproved = isApproved === 'true';
+    if (isActive === 'true' || isActive === 'false') whereClause.isActive = isActive === 'true';
     if (search) {
       whereClause[require('sequelize').Op.or] = [
         { title: { [require('sequelize').Op.like]: `%${search}%` } },

@@ -112,15 +112,56 @@ router.get('/', [optionalAuthenticateToken,
   }
 });
 
+// Get jobs posted by current user (recruiters) — must be declared before "/:id"
+router.get('/my-jobs', [
+  authenticateToken,
+  requireRole(['recruiter', 'admin'])
+], async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+    const offset = (page - 1) * limit;
+
+    const { count, rows: jobs } = await Job.findAndCountAll({
+      where: {
+        recruiterId: req.user.id
+      },
+      include: [
+        {
+          model: User,
+          as: 'recruiter',
+          attributes: ['id', 'firstName', 'lastName', 'email']
+        }
+      ],
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+      distinct: true
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    res.json({
+      data: jobs,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems: count,
+        hasNext: page < totalPages,
+        hasPrev: page > 1
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching recruiter jobs:', error);
+    res.status(500).json({ error: 'Failed to fetch jobs' });
+  }
+});
+
 // Get single job by ID
 router.get('/:id', optionalAuthenticateToken, async (req, res) => {
   try {
     const job = await Job.findOne({
-      where: {
-        id: req.params.id,
-        isActive: true,
-        isApproved: true
-      },
+      where: { id: req.params.id },
       include: [
         {
           model: User,
@@ -131,6 +172,13 @@ router.get('/:id', optionalAuthenticateToken, async (req, res) => {
     });
 
     if (!job) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    // Pending or deactivated jobs are only visible to the owner or an admin
+    const isOwner = req.user && req.user.id === job.recruiterId;
+    const isAdmin = req.user && req.user.role === 'admin';
+    if ((!job.isApproved || !job.isActive) && !isOwner && !isAdmin) {
       return res.status(404).json({ error: 'Job not found' });
     }
 
@@ -173,10 +221,10 @@ router.post('/', [
   body('jobType').isIn(['full-time', 'part-time', 'contract', 'internship', 'remote', 'hybrid']).withMessage('Invalid job type'),
   body('experienceLevel').isIn(['entry', 'junior', 'mid', 'senior', 'executive']).withMessage('Invalid experience level'),
   body('category').trim().notEmpty().withMessage('Category is required'),
-  body('salaryMin').optional().isInt({ min: 0 }).withMessage('Invalid minimum salary'),
-  body('salaryMax').optional().isInt({ min: 0 }).withMessage('Invalid maximum salary'),
-  body('salaryType').optional().isIn(['hourly', 'monthly', 'yearly']).withMessage('Invalid salary type'),
-  body('applicationDeadline').optional().isISO8601().toDate().withMessage('Invalid deadline date')
+  body('salaryMin').optional({ nullable: true, checkFalsy: true }).isInt({ min: 0 }).withMessage('Invalid minimum salary'),
+  body('salaryMax').optional({ nullable: true, checkFalsy: true }).isInt({ min: 0 }).withMessage('Invalid maximum salary'),
+  body('salaryType').optional({ nullable: true, checkFalsy: true }).isIn(['hourly', 'monthly', 'yearly']).withMessage('Invalid salary type'),
+  body('applicationDeadline').optional({ nullable: true, checkFalsy: true }).isISO8601().toDate().withMessage('Invalid deadline date')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -205,7 +253,17 @@ router.put('/:id', [
   authenticateToken,
   requireRole(['recruiter', 'admin']),
   requireOwnership('Job'),
-  // ... same validation as POST ...
+  body('title').optional().trim().notEmpty().withMessage('Job title is required'),
+  body('description').optional().trim().notEmpty().withMessage('Job description is required'),
+  body('company').optional().trim().notEmpty().withMessage('Company name is required'),
+  body('location').optional().trim().notEmpty().withMessage('Location is required'),
+  body('jobType').optional().isIn(['full-time', 'part-time', 'contract', 'internship', 'remote', 'hybrid']).withMessage('Invalid job type'),
+  body('experienceLevel').optional().isIn(['entry', 'junior', 'mid', 'senior', 'executive']).withMessage('Invalid experience level'),
+  body('category').optional().trim().notEmpty().withMessage('Category is required'),
+  body('salaryMin').optional({ nullable: true, checkFalsy: true }).isInt({ min: 0 }).withMessage('Invalid minimum salary'),
+  body('salaryMax').optional({ nullable: true, checkFalsy: true }).isInt({ min: 0 }).withMessage('Invalid maximum salary'),
+  body('salaryType').optional({ nullable: true, checkFalsy: true }).isIn(['hourly', 'monthly', 'yearly']).withMessage('Invalid salary type'),
+  body('applicationDeadline').optional({ nullable: true, checkFalsy: true }).isISO8601().toDate().withMessage('Invalid deadline date')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -218,7 +276,24 @@ router.put('/:id', [
       return res.status(404).json({ error: 'Job not found' });
     }
 
-    await job.update(req.body);
+    // Only these fields can be edited via this endpoint
+    const editable = [
+      'title', 'description', 'requirements', 'responsibilities', 'company',
+      'location', 'jobType', 'experienceLevel', 'category', 'industry',
+      'salaryMin', 'salaryMax', 'salaryType', 'benefits', 'applicationDeadline'
+    ];
+    const updates = {};
+    for (const key of editable) {
+      if (req.body[key] !== undefined) updates[key] = req.body[key] === '' ? null : req.body[key];
+    }
+
+    // Admins may additionally toggle moderation flags
+    if (req.user.role === 'admin') {
+      if (req.body.isApproved !== undefined) updates.isApproved = !!req.body.isApproved;
+      if (req.body.isActive !== undefined) updates.isActive = !!req.body.isActive;
+    }
+
+    await job.update(updates);
 
     res.json({ job });
   } catch (error) {
@@ -245,51 +320,6 @@ router.delete('/:id', [
   } catch (error) {
     console.error('Error deactivating job:', error);
     res.status(500).json({ error: 'Failed to deactivate job' });
-  }
-});
-
-// Get jobs posted by current user (recruiters)
-router.get('/my-jobs', [
-  authenticateToken,
-  requireRole('recruiter')
-], async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 12;
-    const offset = (page - 1) * limit;
-
-    const { count, rows: jobs } = await Job.findAndCountAll({
-      where: {
-        recruiterId: req.user.id
-      },
-      include: [
-        {
-          model: User,
-          as: 'recruiter',
-          attributes: ['id', 'firstName', 'lastName', 'email']
-        }
-      ],
-      order: [['createdAt', 'DESC']],
-      limit,
-      offset,
-      distinct: true
-    });
-
-    const totalPages = Math.ceil(count / limit);
-
-    res.json({
-      data: jobs,
-      pagination: {
-        currentPage: page,
-        totalPages,
-        totalItems: count,
-        hasNext: page < totalPages,
-        hasPrev: page > 1
-      }
-    });
-  } catch (error) {
-    console.error('Error fetching recruiter jobs:', error);
-    res.status(500).json({ error: 'Failed to fetch jobs' });
   }
 });
 

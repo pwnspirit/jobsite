@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { User, Mail, Phone, MapPin, Briefcase, Upload, Save } from 'lucide-react'
 import { api } from '../services/api'
 import toast from 'react-hot-toast'
+import { sanitizePhone, isValidPhone, PHONE_HINT } from '../utils/validation'
 
 function Profile() {
   const { user, updateUser } = useAuth()
@@ -50,11 +51,15 @@ function Profile() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
-    setProfile(prev => ({ ...prev, [name]: value }))
+    setProfile(prev => ({ ...prev, [name]: name === 'phone' ? sanitizePhone(value) : value }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!isValidPhone(profile.phone)) {
+      toast.error(PHONE_HINT)
+      return
+    }
     try {
       setSaving(true)
       const response = await api.put('/users/profile', profile)
@@ -179,10 +184,14 @@ function Profile() {
                     <input
                       type="tel"
                       name="phone"
+                      inputMode="tel"
+                      maxLength={18}
                       value={profile.phone}
                       onChange={handleInputChange}
+                      placeholder="9812345678"
                       className="input w-full"
                     />
+                    <p className="mt-1 text-xs text-gray-500">{PHONE_HINT}</p>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
