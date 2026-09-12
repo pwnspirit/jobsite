@@ -4,7 +4,10 @@ import toast from 'react-hot-toast';
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    // Skips ngrok's HTML interstitial page when the API is tunneled through ngrok
+    // (e.g. testing the deployed frontend against a local backend). Harmless otherwise.
+    'ngrok-skip-browser-warning': 'true'
   }
 });
 
