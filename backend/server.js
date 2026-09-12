@@ -27,7 +27,7 @@ const limiter = rateLimit({
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002','https://jobsite-olive.vercel.app','https://jobsite-2mb7kkoav-pwnspirit.vercel.app'],
   credentials: true
 }));
 app.use(helmet());
@@ -69,23 +69,23 @@ app.use('*', (req, res) => {
 async function startServer() {
   try {
     await sequelize.authenticate();
-    console.log('✅ Database connection established successfully.');
+    console.log('Database connection established successfully.');
     
     // In development, we'll let the setup script handle table creation
     // Just verify the connection works
     if (process.env.NODE_ENV === 'development') {
-      console.log('✅ Database connection verified.');
+      console.log('Database connection verified.');
     }
     
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-      console.log(`📱 Environment: ${process.env.NODE_ENV}`);
-      console.log('\n📋 Next steps:');
+      console.log(`Server running on port ${PORT}`);
+      console.log(`Environment: ${process.env.NODE_ENV}`);
+      console.log('\n Next steps:');
       console.log('1. Run: npm run setup-db (to create database tables)');
       console.log('2. Run: npm run seed (to populate with sample data)');
     });
   } catch (error) {
-    console.error('❌ Unable to start server:', error);
+    console.error('Unable to start server:', error);
     process.exit(1);
   }
 }

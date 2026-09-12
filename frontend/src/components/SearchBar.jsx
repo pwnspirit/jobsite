@@ -20,38 +20,38 @@ function SearchBar() {
 
   return (
     <form onSubmit={handleSearch} className="w-full">
-      <div className="flex items-center bg-white border border-gray-300 rounded-lg shadow-sm focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500">
+      <div className="flex flex-col sm:flex-row sm:items-center bg-white border border-gray-300 rounded-lg sm:rounded-lg shadow-sm focus-within:ring-2 focus-within:ring-primary-500 focus-within:border-primary-500 overflow-hidden">
         {/* Search Input */}
-        <div className="flex-1 flex items-center px-3">
-          <Search className="h-5 w-5 text-gray-400 mr-2" />
+        <div className="flex-1 flex items-center px-3 min-w-0">
+          <Search className="h-5 w-5 text-gray-400 mr-2 shrink-0" />
           <input
             type="text"
             placeholder="Job title, keywords, or company"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 py-2 text-sm text-gray-900 placeholder-gray-500 focus:outline-none"
+            className="flex-1 min-w-0 w-full py-2 text-sm text-gray-900 placeholder-gray-500 focus:outline-none"
           />
         </div>
 
         {/* Divider */}
-        <div className="w-px h-6 bg-gray-300"></div>
+        <div className="h-px sm:h-6 sm:w-px w-full bg-gray-300 shrink-0"></div>
 
         {/* Location Input */}
-        <div className="flex-1 flex items-center px-3">
-          <MapPin className="h-5 w-5 text-gray-400 mr-2" />
+        <div className="flex-1 flex items-center px-3 min-w-0">
+          <MapPin className="h-5 w-5 text-gray-400 mr-2 shrink-0" />
           <input
             type="text"
             placeholder="City, state, or remote"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="flex-1 py-2 text-sm text-gray-900 placeholder-gray-500 focus:outline-none"
+            className="flex-1 min-w-0 w-full py-2 text-sm text-gray-900 placeholder-gray-500 focus:outline-none"
           />
         </div>
 
         {/* Search Button */}
         <button
           type="submit"
-          className="bg-primary-600 text-white px-6 py-2 rounded-r-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors"
+          className="w-full sm:w-auto bg-primary-600 text-white px-6 py-2 sm:rounded-r-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition-colors shrink-0"
         >
           Search
         </button>

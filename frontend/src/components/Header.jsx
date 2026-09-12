@@ -21,21 +21,21 @@ function Header() {
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16 gap-2">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <Briefcase className="h-8 w-8 text-primary-600" />
-            <span className="text-xl font-bold text-gray-900">JobSite</span>
+          <Link to="/" className="flex items-center space-x-2 shrink-0">
+            <Briefcase className="h-7 w-7 sm:h-8 sm:w-8 text-primary-600" />
+            <span className="text-lg sm:text-xl font-bold text-gray-900">JobSite</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8 shrink-0">
             <Link
               to="/"
-              className={`text-sm font-medium transition-colors ${
-                isActive('/') 
-                  ? 'text-primary-600' 
+              className={`text-sm font-medium transition-colors whitespace-nowrap ${
+                isActive('/')
+                  ? 'text-primary-600'
                   : 'text-gray-700 hover:text-primary-600'
               }`}
             >
@@ -43,9 +43,9 @@ function Header() {
             </Link>
             <Link
               to="/jobs"
-              className={`text-sm font-medium transition-colors ${
-                isActive('/jobs') 
-                  ? 'text-primary-600' 
+              className={`text-sm font-medium transition-colors whitespace-nowrap ${
+                isActive('/jobs')
+                  ? 'text-primary-600'
                   : 'text-gray-700 hover:text-primary-600'
               }`}
             >
@@ -55,7 +55,7 @@ function Header() {
               <>
                 <Link
                   to="/post-job"
-                  className={`text-sm font-medium transition-colors ${
+                  className={`text-sm font-medium transition-colors whitespace-nowrap ${
                     isActive('/post-job')
                       ? 'text-primary-600'
                       : 'text-gray-700 hover:text-primary-600'
@@ -65,7 +65,7 @@ function Header() {
                 </Link>
                 <Link
                   to="/jobs/my-jobs"
-                  className={`text-sm font-medium transition-colors ${
+                  className={`text-sm font-medium transition-colors whitespace-nowrap ${
                     isActive('/jobs/my-jobs')
                       ? 'text-primary-600'
                       : 'text-gray-700 hover:text-primary-600'
@@ -78,12 +78,12 @@ function Header() {
           </nav>
 
           {/* Search Bar */}
-          <div className="hidden md:block flex-1 max-w-lg mx-8">
+          <div className="hidden lg:block flex-1 max-w-lg mx-4 xl:mx-8 min-w-0">
             <SearchBar />
           </div>
 
           {/* Right side - Auth buttons or User menu */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-1 sm:space-x-3 shrink-0">
             {isAuthenticated ? (
               <>
                 {/* Notifications */}
@@ -100,7 +100,7 @@ function Header() {
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                     className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
                   >
-                    <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center shrink-0">
                       <User className="h-4 w-4 text-primary-600" />
                     </div>
                     <span className="hidden sm:block text-sm font-medium text-gray-700">
@@ -140,16 +140,16 @@ function Header() {
                 </div>
               </>
             ) : (
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2 sm:space-x-3">
                 <Link
                   to="/login"
-                  className="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors"
+                  className="text-xs sm:text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors whitespace-nowrap"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/register"
-                  className="btn btn-primary btn-sm"
+                  className="btn btn-primary btn-sm whitespace-nowrap"
                 >
                   Sign Up
                 </Link>
@@ -159,7 +159,8 @@ function Header() {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-gray-600 hover:text-primary-600 transition-colors"
+              className="lg:hidden p-2 text-gray-600 hover:text-primary-600 transition-colors"
+              aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -171,13 +172,13 @@ function Header() {
         </div>
 
         {/* Mobile Search Bar */}
-        <div className="md:hidden pb-4">
+        <div className="lg:hidden pb-4">
           <SearchBar />
         </div>
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
+          <div className="lg:hidden border-t border-gray-200 py-4">
             <nav className="flex flex-col space-y-3">
               <Link
                 to="/"
