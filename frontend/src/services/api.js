@@ -2,7 +2,9 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  // In Docker, Nginx proxies this same-origin path to the API container.
+  // Set VITE_API_URL only when the API is hosted on a different origin.
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: {
     'Content-Type': 'application/json',
     // Skips ngrok's HTML interstitial page when the API is tunneled through ngrok
