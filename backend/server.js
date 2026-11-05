@@ -14,7 +14,8 @@ const notificationRoutes = require('./routes/notifications');
 const adminRoutes = require('./routes/admin');
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+// Keep the default aligned with the Vite dev-server proxy in frontend/vite.config.js.
+const PORT = process.env.PORT || 5000;
 
 // Rate limiting
 const limiter = rateLimit({
