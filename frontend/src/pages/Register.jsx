@@ -110,7 +110,7 @@ function Register() {
                 I want to
               </label>
               <div className="grid grid-cols-2 gap-3">
-                <label className="relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none">
+                <label className="relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm hover:border-primary-400 focus-within:ring-2 focus-within:ring-primary-300">
                   <input
                     type="radio"
                     name="role"
@@ -127,14 +127,16 @@ function Register() {
                       </span>
                     </span>
                   </span>
-                  <span className={`pointer-events-none absolute -inset-px rounded-lg border-2 ${
-                    formData.role === 'seeker' ? 'border-primary-500' : 'border-transparent'
-                  }`}>
-                    <span className="absolute inset-0 rounded-lg border-2 border-primary-500 ring-2 ring-primary-500"></span>
-                  </span>
+                  <span
+                    className={`pointer-events-none absolute -inset-px rounded-lg border-2 ${
+                      formData.role === 'seeker'
+                        ? 'border-primary-500 ring-2 ring-primary-500'
+                        : 'border-transparent'
+                    }`}
+                  ></span>
                 </label>
 
-                <label className="relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none">
+                <label className="relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm hover:border-primary-400 focus-within:ring-2 focus-within:ring-primary-300">
                   <input
                     type="radio"
                     name="role"
@@ -151,11 +153,13 @@ function Register() {
                       </span>
                     </span>
                   </span>
-                  <span className={`pointer-events-none absolute -inset-px rounded-lg border-2 ${
-                    formData.role === 'recruiter' ? 'border-primary-500' : 'border-transparent'
-                  }`}>
-                    <span className="absolute inset-0 rounded-lg border-2 border-primary-500 ring-2 ring-primary-500"></span>
-                  </span>
+                  <span
+                    className={`pointer-events-none absolute -inset-px rounded-lg border-2 ${
+                      formData.role === 'recruiter'
+                        ? 'border-primary-500 ring-2 ring-primary-500'
+                        : 'border-transparent'
+                    }`}
+                  ></span>
                 </label>
               </div>
             </div>

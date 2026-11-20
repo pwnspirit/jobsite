@@ -80,7 +80,8 @@ function Applications() {
       shortlisted: { color: 'bg-purple-100 text-purple-800', label: 'Shortlisted' },
       interviewed: { color: 'bg-indigo-100 text-indigo-800', label: 'Interviewed' },
       rejected: { color: 'bg-red-100 text-red-800', label: 'Rejected' },
-      hired: { color: 'bg-green-100 text-green-800', label: 'Hired' }
+      hired: { color: 'bg-green-100 text-green-800', label: 'Hired' },
+      withdrawn: { color: 'bg-gray-100 text-gray-700', label: 'Withdrawn' }
     }
     
     const config = statusConfig[status] || statusConfig.applied
@@ -258,7 +259,7 @@ function Applications() {
                         )}
 
                         <div className="flex flex-wrap gap-2 mb-4">
-                          {getStatusBadge(application.status)}
+                          {getStatusBadge(application.isWithdrawn ? 'withdrawn' : application.status)}
                           <span className="badge badge-outline">
                             {application.job.jobType}
                           </span>

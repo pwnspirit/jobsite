@@ -101,9 +101,21 @@ router.put('/profile', [
 });
 
 // Upload resume
+// Run multer manually so upload problems (wrong file type, file too large)
+// are reported as 400 validation errors instead of a generic 500.
+const handleResumeUpload = (req, res, next) => {
+  upload.single('resume')(req, res, (err) => {
+    if (!err) return next();
+    if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: 'File is too large. Maximum size is 5MB' });
+    }
+    return res.status(400).json({ error: err.message || 'Invalid file upload' });
+  });
+};
+
 router.post('/resume', [
   authenticateToken,
-  upload.single('resume')
+  handleResumeUpload
 ], async (req, res) => {
   try {
     if (!req.file) {

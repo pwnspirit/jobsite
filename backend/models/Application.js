@@ -72,7 +72,6 @@ Application.prototype.updateStatus = function(newStatus, notes = null) {
 Application.prototype.withdraw = function() {
   this.isWithdrawn = true;
   this.withdrawnAt = new Date();
-  this.status = 'withdrawn';
   return this.save();
 };
 
